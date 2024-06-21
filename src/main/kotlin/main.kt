@@ -1,42 +1,36 @@
 package ru.netology
 
+import kotlin.math.max
+
+const val ERROR_TYPE = -1
+const val ERROR_LIMIT = -2
+const val typeCard = "Мир"
+const val lastTransfers = 0
+const val transfer = 150_000
+const val dailyLimit = 150_000
+const val monthlyLimit = 600_000
 fun main() {
 
-    val typeCard = "Мир"
-    val lastTransfers = 0
-    val transfer = 150_000
-    val dailyLimit = 150_000
-    val monthlyLimit = 600_000
-    val commission = calculateCommission(typeCard, lastTransfers, transfer)
-    if (transfer <= dailyLimit && transfer <= monthlyLimit) {
-        println("Сумма перевода: $transfer" + "\nКомиссия: $commission")
+    val commission = calculateCommission(typeCard, transfer, lastTransfers)
+    if (transfer <= dailyLimit && (transfer + lastTransfers) <= monthlyLimit) {
+        println("Сумма перевода: $transfer\nКомиссия: $commission")
     } else {
         println("Превышен лимит. Перевод отменен")
         return
     }
 }
 
-fun calculateCommission(typeCard: String, lastTransfers: Int, transfer: Int):
+fun calculateCommission(typeCard: String, transfer: Int, lastTransfers: Int):
         Int {
-    when (typeCard) {
+    if (transfer > dailyLimit || (transfer + lastTransfers) > monthlyLimit) {
+        return ERROR_LIMIT
+    }
+
+    return when (typeCard) {
         "Мир" -> return 0
-        "MasterCard" -> {
-            return if ((lastTransfers + transfer) > 75_000) {
-                ((transfer - 75_000) * 0.006 + 20).toInt()
-            } else {
-                0
-            }
-        }
-
-        "Visa" -> {
-            return if (transfer * 0.0075 < 35) {
-                35
-            } else {
-                (transfer * 0.0075).toInt()
-            }
-        }
-
-        else -> return 0
+        "MasterCard" -> if (transfer + lastTransfers <= 75_000) 0 else ((transfer + lastTransfers - 75_000) * 0.006).toInt() + 20
+        "Visa" -> max(35, (transfer * 0.0075).toInt())
+        else -> return ERROR_TYPE
     }
 }
 
