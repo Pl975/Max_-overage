@@ -114,13 +114,23 @@ class ComissionTests {
     }
 
     @Test
-    fun testVVisaTransfer() {
+    fun testVisaTransfer() {
         val typeCard = "Visa"
         val transfer = 10_000
         val lastTransfers = 10_000
 
         val result = calculateCommission(typeCard, transfer, lastTransfers)
         assertEquals(75, result)
+    }
+
+    @Test
+    fun testVisaTransferError() {
+        val typeCard = "Visa"
+        val transfer = 10_000
+        val lastTransfers = 10_000
+
+        val result = calculateCommission(typeCard, transfer, lastTransfers)
+        assertEquals(100, result)
     }
 
 }
